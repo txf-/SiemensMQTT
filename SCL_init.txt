@@ -1,0 +1,24 @@
+// MQTT communication control driver
+#MQTT(sInClientID := 'ClientID',
+      sInUserName := 'UserName',
+             sInPassword := '12345',
+             TCON_Param := "MQTT_TCON_Param",
+             ERROR_MQTT := #MQTT_Errors);
+ 
+        
+ // Serialize message Structure to be sent
+       "fcMQTT_SerializeMessageRaw"(sInSerial:='PLC Serial Number or Other Identifier',
+                                    sInTopic:='Server MQTT Topic',
+                             sInVersion:='v1', //If you have your server running multiple sets of the same topic
+                             iInQoS:=0,
+                             Message:="dbMQTT_Data".ConfigData,
+                             bOutMessageSerialized=>#bTemp); //Turns true when message has entered queue
+ 
+//Subscribe to message and send to DB
+"fcMQTT_DeserializeMessageSubscribe"(sInTopic:='Server MQTT Topic',
+                                     iInQoS:=0,
+                                     iInBufferIndex:=0, //Must be unique for incoming topics
+                                     sInSerial:='PLC Serial Number or Other Identifier',
+                                     sInVersion:='v1',
+                                     Message=>"dbMQTT_Data".TestTopic,
+                                     bOutNewMessage=>#bTemp); //Turns true when a new message has been received
